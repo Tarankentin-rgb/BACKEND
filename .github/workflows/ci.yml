@@ -12,7 +12,7 @@ jobs:
     name: Lint & format
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: 16
@@ -41,7 +41,7 @@ jobs:
       MONGODB_URL: mongodb://127.0.0.1:27017/node-boilerplate
       JWT_SECRET: thisisasamplesecret
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
       - uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
