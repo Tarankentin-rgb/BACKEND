@@ -90,3 +90,23 @@ Integration tests live in `tests/integration/`, unit tests in `tests/unit/`. Tes
 ## Linting
 
 ESLint follows the [Airbnb base](https://github.com/airbnb/javascript) style guide with Prettier integration. Husky runs lint-staged on pre-commit. Configuration files: `.eslintrc.json`, `.prettierrc.json`.
+
+## Known Limitations & Improvement Areas
+
+These are real issues identified in the current codebase — worth raising when working on related code:
+
+**Dependencies outdated:**
+- `mongoose` 5.x is EOL. The connection options in `src/config/config.js` (`useCreateIndex`, `useNewUrlParser`, `useUnifiedTopology`) are deprecated and throw warnings in Mongoose 6+. Upgrading to Mongoose 7/8 requires removing those options and handling breaking changes in query/document APIs.
+- `passport` 0.4.x — v0.6+ has breaking changes around session handling; v0.7 is current.
+- `faker` 5.x in tests is EOL; the maintained fork is `@faker-js/faker` with a different import path.
+- `jest` 26.x — current is 29.x.
+
+**Auth & security gaps:**
+- No refresh token rotation — the same refresh token is reused indefinitely until expiry. A compromised token stays valid for 30 days.
+- Rate limiting only applies in `production` (`src/app.js:49`). In development/staging, auth endpoints are unprotected from brute force.
+- `FRONTEND_URL` defaults to `http://localhost:3000` in `src/config/config.js` — password reset and email verification links point there if the variable is not set in production.
+
+**Scalability:**
+- No caching layer (e.g. Redis). Every request hits MongoDB directly, including token lookups.
+- `Token` collection has no TTL index — expired tokens accumulate unless manually purged.
+- The `paginate` plugin builds queries with `countDocuments()` on every paginated request, which is slow on large collections without careful indexing.
