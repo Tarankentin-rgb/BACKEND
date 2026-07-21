@@ -89,7 +89,7 @@
     "lint-staged": "^11.0.0",
     "node-mocks-http": "^1.8.0",
     "nodemon": "^2.0.0",
-    "prettier": "^2.0.5",
+    "prettier": "^3.9.6",
     "supertest": "^6.0.1"
   }
 }
